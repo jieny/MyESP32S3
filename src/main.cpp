@@ -7,6 +7,7 @@ using namespace std;
 // led引脚
 int led_pin = 18;
 #define LED_BUILTIN 48
+#define led 13 // 定义板载led等的控制引脚是13号
 
 void setup()
 {
@@ -22,6 +23,8 @@ void setup()
     // led 指示灯
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
+
+    pinMode(led, OUTPUT); // 设置led的工作模式为输出模式
 }
 
 void loop()
@@ -30,4 +33,9 @@ void loop()
     printf("loop Hello world by printf 中文\n");
 
     delay(2000);
+
+    digitalWrite(led, HIGH); // 设置led灯输出高电平
+    delay(1000);             // 延时一秒
+    digitalWrite(led, LOW);  // 设置led灯输出低电平
+    delay(1000);             // 延时一秒
 }
