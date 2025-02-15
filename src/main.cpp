@@ -1,9 +1,7 @@
 #include "web_api.h"
 #include <Arduino.h>
 #include <ArduinoOTA.h>
-#include <WiFi.h>
-// https://github.com/tzapu/WiFiManager
-#include <WiFiManager.h>
+#include "WiFi.h"
 
 using namespace std;
 
@@ -15,16 +13,6 @@ int led_pin = 18;
 // 替换为你的 Wi-Fi 名称和密码
 const char* ssid = "Excellence";
 const char* password = "Pa22446689";
-
-WiFiManager wm;
-WiFiManagerParameter custom_mqtt_server("server", "mqtt server", "", 40);
-
-void saveParamsCallback () {
-    Serial0.println("Get Params:");
-    Serial0.print(custom_mqtt_server.getID());
-    Serial0.print(" : ");
-    Serial0.println(custom_mqtt_server.getValue());
-}
 
 void setup()
 {
@@ -44,25 +32,47 @@ void setup()
 
     pinMode(led, OUTPUT); // 设置led的工作模式为输出模式
 
-    //reset settings - wipe credentials for testing
-    //wm.resetSettings();
-    wm.addParameter(&custom_mqtt_server);
-    wm.setConfigPortalBlocking(false);
-    wm.setSaveParamsCallback(saveParamsCallback);
 
-    //automatically connect using saved credentials if they exist
-    //If connection fails it starts an access point with the specified name
-    if(wm.autoConnect("AutoConnectAP")){
-        Serial0.println("connected...yeey :)");
+    // 检查是否有保存的Wi-Fi配置信息
+    if (WiFi.status() != WL_CONNECTED) {
+        WiFi.begin();  // 尝试自动连接上次保存的Wi-Fi
+        Serial0.println("尝试连接已保存的WiFi...");
+
+        // 等待连接成功
+        int attempts = 0;
+        while (WiFi.status() != WL_CONNECTED && attempts < 20) {
+            delay(500);
+            Serial0.print(".");
+            attempts++;
+        }
     }
-    else {
-        Serial0.println("Configportal running");
+
+    // 如果无法自动连接Wi-Fi，则进入SmartConfig模式
+    if (WiFi.status() != WL_CONNECTED) {
+        Serial0.println("\n开始配网...");
+        WiFi.beginSmartConfig();  // 启动SmartConfig
+
+        while (!WiFi.smartConfigDone()) {
+            delay(500);
+            Serial0.print(".");
+        }
+        Serial0.println("配网成功");
     }
+
+    // 确保连接成功
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial0.print(".");
+    }
+    Serial0.println("\nWiFi已连接.");
+    Serial0.print("IP地址: ");
+    Serial0.println(WiFi.localIP());
 }
 
 void loop()
 {
     Serial0.println("loop Hello world by Serial 中文 要用 Serial0 111");
+    Serial0.println(WiFi.localIP());
     printf("loop Hello world by printf 中文\n");
 
     delay(2000);
