@@ -4,6 +4,9 @@
 #include <WebServer.h>
 #include <Preferences.h> // 用于保存WiFi配置到NVS
 
+// 必须在所有include之前
+#define Serial Serial0
+
 using namespace std;
 
 // led引脚
@@ -172,20 +175,21 @@ void setup() {
         WiFi.begin(savedSSID.c_str(), savedPass.c_str());
         WiFi.waitForConnectResult();
 
-        Serial0.println(" ");
-        Serial0.println("Serial0 WiFi.status() --- " + WiFi.status());
-        Serial0.println("Serial0 WiFi.status() --- " + WL_IDLE_STATUS);
-        Serial0.println("Serial0 WiFi.status() --- " + WL_CONNECTED);
-
-        if (WiFi.status() == WL_IDLE_STATUS) {
-
+        unsigned long startTime = millis();
+        // 30秒超时
+        while (WiFi.status() != WL_CONNECTED && (millis() - startTime) < 30000) {
+            delay(500);
+            Serial0.print(".");
         }
 
-        Serial.println("自动连接成功");
-        Serial.println("IP: " + WiFi.localIP().toString());
+        if (WiFi.status() == WL_CONNECTED) {
+            Serial.println("Serial 自动连接成功");
+            Serial0.println("自动连接成功");
+            Serial0.println("IP: " + WiFi.localIP().toString());
 
-        // 配置NTP时间服务
-        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2);
+            // 配置NTP时间服务
+            configTime(gmtOffset_sec, daylightOffset_sec, ntpServer1, ntpServer2);
+        }
 
         return;
     }
