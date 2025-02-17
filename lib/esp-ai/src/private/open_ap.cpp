@@ -23,11 +23,18 @@
  * @websit https://espai.fun
  */
 #include "open_ap.h"
- 
+
+// 定义网段参数
+IPAddress local_ip(192, 168, 2, 1);    // AP 的 IP 地址
+IPAddress gateway(192, 168, 2, 1);     // 网关地址（通常与 AP IP 一致）
+IPAddress subnet(255, 255, 255, 0);    // 子网掩码
+
 void ESP_AI::open_ap()
 {
     WiFi.mode(WIFI_AP);
     String ap_name = strlen(wifi_config.ap_name) > 0 ? wifi_config.ap_name : "ESP-AI";
+    // 配置 AP 的 IP 地址、网关和子网掩码
+    WiFi.softAPConfig(local_ip, gateway, subnet);
     WiFi.softAP(ap_name);
     IPAddress ip = WiFi.softAPIP();
     String ipStr = String(ip[0]) + '.' + String(ip[1]) + '.' + String(ip[2]) + '.' + String(ip[3]);
