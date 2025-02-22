@@ -16,34 +16,25 @@
  * Commercial use of this software requires prior written authorization from the Licensor.
  * 请注意：将 ESP-AI 代码用于商业用途需要事先获得许可方的授权。
  * 删除与修改版权属于侵权行为，请尊重作者版权，避免产生不必要的纠纷。
- * 
- * @author 小明IO   
+ *
+ * @author 小明IO
  * @email  1746809408@qq.com
  * @github https://github.com/wangzongming/esp-ai
  * @websit https://espai.fun
  */
- 
-#include "esp-ai.h"
- 
-#include "wakeUp/edge-impulse/main.h"
-#include "init/speaker_i2s_setup.h"
-#include "init/mic_i2s_init.h" 
-#include "webSocketEvent/main.h"
+#include "tts.h"
 
-#include "private/adjustVolume.h"
-
-#include "sdk/begin.h"
-#include "sdk/loop.h"
-#include "sdk/setWifiConfig.h"
-#include "sdk/wifiIsConnected.h" 
-#include "sdk/localIP.h" 
-#include "sdk/onEvent.h" 
-#include "sdk/onError.h" 
-#include "sdk/wakeUp.h" 
-#include "sdk/setVolume.h"  
-
-#include "webServer/main.h" 
- 
-ESP_AI::ESP_AI() : debug(false), wifi_config(default_wifi_config), server_config(default_server_config), wake_up_config(default_wake_up_config), volume_config(default_volume_config), i2s_config_mic(default_i2s_config_mic), i2s_config_speaker(default_i2s_config_speaker), reset_btn_config(default_reset_btn_config), lights_config(default_lights_config)
+void ESP_AI::reCache()
 {
-} 
+    if(!esp_ai_cache_audio_du.empty()){ 
+        esp_ai_cache_audio_du.clear();
+    }
+    if(!esp_ai_cache_audio_greetings.empty()){ 
+        esp_ai_cache_audio_greetings.clear();
+    }
+    if(!esp_ai_cache_audio_sleep_reply.empty()){ 
+        esp_ai_cache_audio_sleep_reply.clear();
+    } 
+    esp_ai_webSocket.sendTXT("{ \"type\":\"re_cache\" }");
+     
+}

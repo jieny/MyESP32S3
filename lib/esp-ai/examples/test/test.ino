@@ -33,7 +33,16 @@ void onSessionStatus(String status) {
   //   face->Update();
   // }
 }
-
+void onPosition( String ip, String nation, String province, String city, String latitude, String longitude) {
+    // 处理位置信息
+    Serial.println("============ 定位成功 ============");
+    Serial.println(ip);
+    Serial.println(nation);
+    Serial.println(province);
+    Serial.println(city);
+    Serial.println(latitude);
+    Serial.println(longitude);
+}
 void setup() {
   Serial.begin(115200);
 
@@ -89,29 +98,23 @@ void setup() {
   };
 
 
-  // // XIAO ESP32s3 麦克风配置
-  // ESP_AI_i2s_config_mic i2s_config_mic = {
-  //   .bck_io_num = I2S_PIN_NO_CHANGE,   // BCK引脚
-  //   .ws_io_num = 42,    // WS引脚
-  //   .data_in_num = 41  // 没有数据输出 (TX)
-  // };
+  // XIAO ESP32s3 麦克风配置
+  ESP_AI_i2s_config_mic i2s_config_mic = { 5, 4, 6 };
 
-  // // XIAO ESP32s3 扬声器配置
-  // ESP_AI_i2s_config_speaker i2s_config_speaker = {
-  //   .bck_io_num = 2,  // BCK引脚
-  //   .ws_io_num = 3,   // WS引脚
-  //   .data_in_num = 1  // DATA输入引脚
-  // };
+  // XIAO ESP32s3 扬声器配置
+  ESP_AI_i2s_config_speaker i2s_config_speaker = {
+    .bck_io_num =15,  // BCK引脚
+    .ws_io_num = 16,   // WS引脚
+    .data_in_num = 7  // DATA输入引脚
+  }; 
 
-  // 启动
-  // esp_ai.onSessionStatus(onSessionStatus);
-
-  // xiao 配置
+  esp_ai.onPosition(onPosition);
+  // // 第三代配置
   // esp_ai.begin({ debug, wifi_config, server_config, wake_up_config, volume_config, i2s_config_mic, i2s_config_speaker });
 
   // esp32s3 配置
   esp_ai.begin({ debug, wifi_config, server_config, wake_up_config, volume_config });
-  // esp_ai.onEvent(on_command);
+  // esp_ai.onEvent(on_command); 
 
   // boot 按钮有问题，必须在 begen 后在从新设置一遍
   // pinMode(0, INPUT_PULLUP);

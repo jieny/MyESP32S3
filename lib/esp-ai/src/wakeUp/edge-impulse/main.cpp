@@ -195,43 +195,7 @@ void ESP_AI::capture_samples()
 
         _is_silence = is_silence(mic_sample_buffer, bytes_read);
 
-        // test...
-        // if (_is_silence)
-        // {
-        //     // 不是静默环境
-        //     if (last_silence_time_wakeup == 0)
-        //     {
-        //         last_not_silence_time_wekeup = 0;
-        //         last_silence_time_wakeup = millis();
-        //         if (esp_ai_sleep)
-        //         {
-        //             esp_ai_sleep = false;
-        //         }
-        //     }
-        //     // 计算静默时间
-        //     else if ((millis() - last_silence_time_wakeup) > 500)
-        //     {
-        //         // Enter sleep ing...
-        //         if (!esp_ai_sleep && ((millis() - last_silence_time_wakeup) / 1000 > 1000 * 60 * 1))
-        //         {
-        //             esp_ai_sleep = true;
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     // 不是有声环境
-        //     if (last_not_silence_time_wekeup == 0)
-        //     {
-        //         last_not_silence_time_wekeup = millis();
-        //     }
-        //     // 计算有声时间
-        //     else if ((millis() - last_not_silence_time_wekeup) > 500)
-        //     {
-        //         last_silence_time_wakeup = 0;
-        //     }
-        // }
-
+        
         if (esp_ai_start_get_audio)
         {
             int vad = esp_ai_user_has_spoken ? wake_up_config.vad_course : wake_up_config.vad_first;
@@ -256,7 +220,7 @@ void ESP_AI::capture_samples()
                     }
                     else
                     {
-                        if (last_not_silence_time > 0 && (millis() - last_not_silence_time > 500))
+                        if (last_not_silence_time > 0 && (millis() - last_not_silence_time > 200))
                         {
                             // 切换到非静音状态
                             last_silence_time = 0;

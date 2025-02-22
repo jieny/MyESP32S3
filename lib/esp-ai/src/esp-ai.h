@@ -183,7 +183,7 @@ public:
      * @province    省份
      * @city        城市
      */
-    void onPosition(void (*func)(String ip, String nation, String province, String city));
+    void onPosition(void (*func)(String ip, String nation, String province, String city, String latitude, String longitude));
 
     /**
      * 按五次按钮回调，内部会自动执行清除配网信息的操作，
@@ -196,6 +196,11 @@ public:
      */
     void clearData();
 
+    /**
+     * 让设备重新进行一次音频缓存
+     */
+    void reCache();
+    
 private:
     ESP_AI_i2s_config_mic i2s_config_mic;
     ESP_AI_i2s_config_speaker i2s_config_speaker;
@@ -204,6 +209,7 @@ private:
     ESP_AI_wake_up_config wake_up_config;
     ESP_AI_volume_config volume_config;
     ESP_AI_reset_btn_config reset_btn_config;
+    ESP_AI_lights_config lights_config; 
     bool debug;
 
     void (*onEventCb)(String command_id, String data) = nullptr;
@@ -212,7 +218,7 @@ private:
     void (*onNetStatusCb)(String status) = nullptr;
     void (*onConnectedWifiCb)(String device_ip) = nullptr;
     void (*onSessionStatusCb)(String status) = nullptr;
-    void (*onPositionCb)(String ip, String nation, String province, String city) = nullptr;
+    void (*onPositionCb)(String ip, String nation, String province, String city, String latitude, String longitude) = nullptr;
    
     String (*onBindDeviceCb)(JSONVar data) = nullptr;
     void (*onRepeatedlyClickCb)() = nullptr;
@@ -263,10 +269,10 @@ private:
 
     static void on_repeatedly_click_wrapper(void *arg);
     void on_repeatedly_click();
-
-    static void send_audio_wrapper(void *arg);
-    void send_audio();
-
+ 
+    static void on_wakeup_wrapper(void *arg);
+    void on_wakeup();
+    
     static void play_audio_wrapper(void *arg);
     void play_audio();
 
